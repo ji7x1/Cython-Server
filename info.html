@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<script>
+    // سكربت سريع لمنع الوميض الأبيض وتطبيق الثيم قبل تحميل الصفحة
+    (function() {
+        const mode = localStorage.getItem('themeMode');
+        const color = localStorage.getItem('themeColor');
+        if (mode === 'dark') document.documentElement.classList.add('dark');
+        if (color) document.documentElement.classList.add(color);
+        const bg = mode === 'dark' ? '#111' : '#f4f7f9';
+        document.documentElement.style.backgroundColor = bg;
+    })();
+</script>
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي - Cython 2.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root { --main: #4facfe; --bg: #f4f7f9; --app: #ffffff; --p: #555; --input-bg: #f0f8ff; }
+        
+        html.color-1 { --main: #4facfe; } html.color-2 { --main: #ff6b6b; }
+        html.color-3 { --main: #51cf66; } html.color-4 { --main: #a29bfe; }
+        html.color-5 { --main: #fab005; } html.color-6 { --main: #ff85a1; }
+        html.color-7 { --main: #20c997; } html.color-8 { --main: #5c7cfa; }
+        html.color-9 { --main: #a67c52; } html.color-10 { --main: #333333; }
+        
+        html.dark { --bg: #111 !important; --app: #222 !important; --p: #bbb !important; --input-bg: #333 !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; outline: none !important; }
+        
+        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: 0.5s; }
+
+        /* إطار الهاتف الثابت */
+        .phone { 
+            width: 350px; height: 700px; background: var(--app); 
+            border-radius: 40px; display: flex; flex-direction: column; 
+            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            position: relative; border: 8px solid #222; 
+        }
+
+        .header { padding: 40px 20px 10px; display: flex; align-items: center; gap: 15px; }
+        .header h3 { color: var(--main); font-weight: 900; font-size: 18px; }
+        .back-link { color: var(--main); font-size: 20px; text-decoration: none; }
+
+        .content { flex: 1; padding: 20px; overflow-y: auto; text-align: center; }
+
+        .profile-pic {
+            width: 100px; height: 100px; border-radius: 50%;
+            border: 3px solid var(--main); padding: 3px;
+            margin-bottom: 20px; object-fit: cover;
+        }
+
+        .info-card {
+            background: var(--input-bg); padding: 12px 15px;
+            border-radius: 20px; margin-bottom: 12px; text-align: right;
+            transition: 0.3s; border: 1px solid transparent;
+        }
+        .info-card:focus-within { border-color: var(--main); transform: translateX(-5px); }
+
+        .label { font-size: 11px; color: var(--p); display: block; font-weight: bold; margin-bottom: 2px; }
+        
+        .field-group { display: flex; align-items: center; gap: 10px; }
+        .val { flex: 1; background: none; border: none; color: var(--main); font-weight: bold; font-size: 14px; width: 100%; }
+
+        .eye-btn { cursor: pointer; color: var(--p); font-size: 13px; }
+
+        .actions { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn {
+            width: 100%; padding: 13px; border-radius: 15px; border: none;
+            font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px;
+        }
+        .btn-save { background: var(--main); color: white; }
+        .btn-logout { background: #ff4757; color: white; margin-top: 5px; }
+        .btn:active { transform: scale(0.98); }
+
+    </style>
+</head>
+<body>
+
+    <div class="phone">
+        <div class="header">
+            <a href="index.html" class="back-link"><i class="fas fa-chevron-right"></i></a>
+            <h3>معلومات الحساب</h3>
+        </div>
+
+        <div class="content">
+            <img id="userImg" src="https://via.placeholder.com/150" class="profile-pic">
+
+            <div class="info-card">
+                <span class="label"><i class="fas fa-user"></i> اسم المستخدم</span>
+                <input type="text" id="username" class="val" readonly>
+            </div>
+
+            <div class="info-card">
+                <span class="label"><i class="fas fa-envelope"></i> البريد الإلكتروني</span>
+                <input type="email" id="email" class="val" value="user@cython.com" readonly>
+            </div>
+
+            <div class="info-card">
+                <span class="label"><i class="fas fa-lock"></i> كلمة المرور</span>
+                <div class="field-group">
+                    <input type="password" id="pass" class="val" value="********" readonly>
+                    <i class="fas fa-eye eye-btn" onclick="togglePass()"></i>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-save" id="editBtn" onclick="toggleEdit()">تعديل البيانات</button>
+                <button class="btn btn-logout" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isEditing = false;
+
+        function togglePass() {
+            const p = document.getElementById('pass');
+            p.type = p.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const fields = ['username', 'email', 'pass'];
+            const btn = document.getElementById('editBtn');
+
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                el.readOnly = !isEditing;
+                if(isEditing) el.style.boxShadow = "0 1px 0 var(--main)";
+                else el.style.boxShadow = "none";
+            });
+
+            if(isEditing) {
+                btn.innerText = "حفظ التغييرات";
+                btn.style.background = "#51cf66"; // لون أخضر عند الحفظ
+            } else {
+                // حفظ الاسم الجديد في الذاكرة
+                localStorage.setItem('username', document.getElementById('username').value);
+                btn.innerText = "تعديل البيانات";
+                btn.style.background = "var(--main)";
+                alert("تم حفظ التغييرات بنجاح!");
+                location.reload(); 
+            }
+        }
+
+        function loadData() {
+            const name = localStorage.getItem('username') || "زائر";
+            document.getElementById('username').value = name;
+            document.getElementById('userImg').src = `https://ui-avatars.com/api/?name=${name}&background=random&color=fff`;
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = "index.html";
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>

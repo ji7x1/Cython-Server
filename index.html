@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<script>
+    (function() {
+        const mode = localStorage.getItem('themeMode');
+        const color = localStorage.getItem('themeColor');
+        if (mode === 'dark') document.documentElement.classList.add('dark');
+        if (color) document.documentElement.classList.add(color);
+        const bg = mode === 'dark' ? '#111' : '#f4f7f9';
+        document.documentElement.style.backgroundColor = bg;
+    })();
+</script>
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cython 2.0 - الرئيسية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        
+        :root { --main: #4facfe; --bg: #f4f7f9; --app: #ffffff; --p: #555; }
+        
+        html.color-1 { --main: #4facfe; } html.color-2 { --main: #ff6b6b; }
+        html.color-3 { --main: #51cf66; } html.color-4 { --main: #a29bfe; }
+        html.color-5 { --main: #fab005; } html.color-6 { --main: #ff85a1; }
+        html.color-7 { --main: #20c997; } html.color-8 { --main: #5c7cfa; }
+        html.color-9 { --main: #a67c52; } html.color-10 { --main: #333333; }
+        
+        html.dark { --bg: #111 !important; --app: #222 !important; --p: #bbb !important; background-color: #111 !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; outline: none !important; }
+        
+        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
+        .phone { width: 350px; height: 700px; background: var(--app); border-radius: 40px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; border: 8px solid #222; }
+        
+        .sidebar { position: absolute; top: 0; right: -100%; width: 80%; height: 100%; background: var(--app); z-index: 999; transition: 0.3s; padding: 50px 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+        .sidebar.active { right: 0; }
+        
+        /* الهيدر مع صورة المستخدم */
+        .header { padding: 40px 25px 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* ستايل صورة المستخدم فوق يسار */
+        .user-header-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--main);
+            object-fit: cover;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(var(--main), 0.2);
+        }
+        .user-header-img:hover { transform: scale(1.1); }
+
+        .main { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .brand { color: var(--main); font-size: 38px; font-weight: 900; }
+        
+        .btn-join { background: var(--main); color: #fff; padding: 15px 45px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        
+        .welcome-msg { display: none; background: var(--bg); padding: 10px 25px; border-radius: 50px; align-items: center; gap: 10px; border: 2px solid var(--main); animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .footer { height: 80px; background: rgba(0,0,0,0.05); display: flex; justify-content: space-around; align-items: center; }
+        .footer a { color: var(--main); font-size: 25px; text-decoration: none; }
+        
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
+        .dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
+        .item { display: flex; align-items: center; gap: 10px; padding: 15px 0; color: var(--p); font-weight: bold; cursor: pointer; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="sidebar" id="sidebar">
+            <h3 style="color:var(--main)">إعدادات Cython</h3>
+            <div class="theme-grid">
+                <div class="dot" style="background:#4facfe" onclick="setT('color-1')"></div>
+                <div class="dot" style="background:#ff6b6b" onclick="setT('color-2')"></div>
+                <div class="dot" style="background:#51cf66" onclick="setT('color-3')"></div>
+                <div class="dot" style="background:#a29bfe" onclick="setT('color-4')"></div>
+                <div class="dot" style="background:#fab005" onclick="setT('color-5')"></div>
+                <div class="dot" style="background:#ff85a1" onclick="setT('color-6')"></div>
+                <div class="dot" style="background:#20c997" onclick="setT('color-7')"></div>
+                <div class="dot" style="background:#5c7cfa" onclick="setT('color-8')"></div>
+                <div class="dot" style="background:#a67c52" onclick="setT('color-9')"></div>
+                <div class="dot" style="background:#333333" onclick="setT('color-10')"></div>
+            </div>
+            <div class="item" onclick="toggleD()"><i class="fas fa-adjust"></i> وضع ليلي / نهاري</div>
+            <a href="https://t.me/Cython" class="item"><i class="fab fa-telegram"></i> قناة التليجرام</a>
+            <button onclick="toggleMenu()" style="margin-top:20px; padding:10px; width:100%; background:var(--main); color:white; border:none; border-radius:10px; cursor:pointer;">إغلاق</button>
+        </div>
+
+        <div class="header">
+            <i class="fas fa-bars" style="color:var(--main); font-size:24px; cursor:pointer" onclick="toggleMenu()"></i>
+            
+            <a href="info.html" id="userLink">
+                <i class="fas fa-user-circle" id="userIcon" style="color:var(--main); font-size:26px;"></i>
+            </a>
+        </div>
+
+        <div class="main">
+            <h1 class="brand">Cython 2.0</h1>
+            <p style="color:var(--p); font-weight:bold; margin-bottom:30px;">روبوت ذكاء اصطناعي متكامل</p>
+            
+            <div id="authArea">
+                <a href="signup.html" class="btn-join">سجل ويانه</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="chat.html"><i class="fas fa-robot"></i></a>
+            <a href="games.html"><i class="fas fa-gamepad"></i></a>
+            <a href="camera.html"><i class="fas fa-camera"></i></a>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
+        
+        function setT(c) {
+            for(let i=1; i<=10; i++) document.documentElement.classList.remove('color-'+i);
+            document.documentElement.classList.add(c);
+            localStorage.setItem('themeColor', c);
+        }
+
+        function toggleD() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('themeMode', isDark ? 'dark' : 'light');
+            document.documentElement.style.backgroundColor = isDark ? '#111' : '#f4f7f9';
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const username = localStorage.getItem('username');
+            const authArea = document.getElementById('authArea');
+            const userLink = document.getElementById('userLink');
+
+            if (isLoggedIn === 'true' && username) {
+                // 1. استبدال الأيقونة بالصورة في الهيدر
+                userLink.innerHTML = `<img src="https://ui-avatars.com/api/?name=${username}&background=random&color=fff" class="user-header-img">`;
+                
+                // 2. تحديث منطقة الترحيب في الوسط
+                authArea.innerHTML = `
+                    <div class="welcome-msg" style="display: flex;">
+                        <span>هلو،</span>
+                        <strong>${username}</strong>
+                        <i class="fas fa-hand-sparkles" style="color: #fab005;"></i>
+                    </div>
+                `;
+            }
+        }
+
+        window.addEventListener('load', checkLoginStatus);
+    </script>
+</body>
+</html>
