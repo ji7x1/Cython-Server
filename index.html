@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <script>
+    // نظام الحفاظ على الثيم والتباين قبل التحميل (Zero Latency)
     (function() {
         const mode = localStorage.getItem('themeMode');
         const color = localStorage.getItem('themeColor');
         if (mode === 'dark') document.documentElement.classList.add('dark');
         if (color) document.documentElement.classList.add(color);
-        const bg = mode === 'dark' ? '#111' : '#f4f7f9';
+        const bg = mode === 'dark' ? '#050505' : '#f0f2f5';
         document.documentElement.style.backgroundColor = bg;
     })();
 </script>
@@ -13,110 +14,206 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cython 2.0 - الرئيسية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cython Grandmaster - Ali Qutaiba</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         
-        :root { --main: #4facfe; --bg: #f4f7f9; --app: #ffffff; --p: #555; }
+        :root { 
+            --main: #4facfe; --bg: #f0f2f5; --app: #ffffff; --text: #1a1a1a; --p: #64748b; 
+            --glass: rgba(255, 255, 255, 0.7); --border: rgba(0,0,0,0.06);
+        }
         
-        html.color-1 { --main: #4facfe; } html.color-2 { --main: #ff6b6b; }
-        html.color-3 { --main: #51cf66; } html.color-4 { --main: #a29bfe; }
-        html.color-5 { --main: #fab005; } html.color-6 { --main: #ff85a1; }
-        html.color-7 { --main: #20c997; } html.color-8 { --main: #5c7cfa; }
-        html.color-9 { --main: #a67c52; } html.color-10 { --main: #333333; }
-        
-        html.dark { --bg: #111 !important; --app: #222 !important; --p: #bbb !important; background-color: #111 !important; }
+        html.dark { 
+            --bg: #050505; --app: #0f0f0f; --text: #f1f5f9; --p: #94a3b8; 
+            --glass: rgba(15, 15, 15, 0.75); --border: rgba(255,255,255,0.06);
+        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; outline: none !important; }
-        
-        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        /* نظام الثيمات العشري */
+        html.color-1 { --main: #4facfe; } html.color-2 { --main: #ff4757; }
+        html.color-3 { --main: #2ecc71; } html.color-4 { --main: #a29bfe; }
+        html.color-5 { --main: #f1c40f; } html.color-6 { --main: #e84393; }
+        html.color-7 { --main: #00d2d3; } html.color-8 { --main: #54a0ff; }
+        html.color-9 { --main: #ae8b70; } html.color-10 { --main: #34495e; }
 
-        .phone { width: 350px; height: 700px; background: var(--app); border-radius: 40px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; border: 8px solid #222; }
-        
-        .sidebar { position: absolute; top: 0; right: -100%; width: 80%; height: 100%; background: var(--app); z-index: 999; transition: 0.3s; padding: 50px 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Cairo', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; caret-color: transparent !important;
+        }
+
+        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: background 0.5s ease; }
+
+        .phone { 
+            width: 100%; height: 100%; max-width: 500px; 
+            background: var(--app); display: flex; flex-direction: column; 
+            position: relative; overflow: hidden;
+        }
+
+        /* أنميشن الصاروخ المطور */
+        .rocket-launch {
+            position: fixed; font-size: 35px; color: var(--main); z-index: 9999;
+            pointer-events: none; transition: all 0.7s cubic-bezier(0.47, 0, 0.745, 0.715);
+            filter: drop-shadow(0 0 10px var(--main));
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .shake-screen { animation: shake 0.2s ease-in-out; }
+
+        .header { height: 90px; padding: 20px 25px 0; display: flex; justify-content: space-between; align-items: center; z-index: 2000; }
+        .menu-icon { font-size: 26px; color: var(--main); cursor: pointer; }
+
+        /* السايد بار */
+        .sidebar { 
+            position: absolute; top: 0; right: -100%; width: 85%; height: 100%; 
+            background: var(--glass); backdrop-filter: blur(25px); 
+            z-index: 4000; transition: 0.7s cubic-bezier(0.19, 1, 0.22, 1); 
+            padding: 60px 25px 40px; border-left: 1px solid var(--border);
+            display: flex; flex-direction: column;
+        }
         .sidebar.active { right: 0; }
         
-        /* الهيدر مع صورة المستخدم */
-        .header { padding: 40px 25px 20px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* ستايل صورة المستخدم فوق يسار */
-        .user-header-img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid var(--main);
-            object-fit: cover;
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(var(--main), 0.2);
+        .side-item { 
+            display: flex; align-items: center; gap: 20px; padding: 18px; 
+            color: var(--text); font-weight: 700; cursor: pointer; 
+            border-radius: 20px; transition: 0.3s;
         }
-        .user-header-img:hover { transform: scale(1.1); }
+        .side-item i { font-size: 20px; color: var(--main); width: 25px; }
 
-        .main { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .brand { color: var(--main); font-size: 38px; font-weight: 900; }
-        
-        .btn-join { background: var(--main); color: #fff; padding: 15px 45px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 18px; transition: 0.3s; }
-        
-        .welcome-msg { display: none; background: var(--bg); padding: 10px 25px; border-radius: 50px; align-items: center; gap: 10px; border: 2px solid var(--main); animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 15px 0 30px; }
+        .dot { aspect-ratio: 1; border-radius: 12px; cursor: pointer; border: 2px solid transparent; }
 
-        .footer { height: 80px; background: rgba(0,0,0,0.05); display: flex; justify-content: space-around; align-items: center; }
-        .footer a { color: var(--main); font-size: 25px; text-decoration: none; }
-        
-        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
-        .dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
-        .item { display: flex; align-items: center; gap: 10px; padding: 15px 0; color: var(--p); font-weight: bold; cursor: pointer; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 160px; }
+        .hero h1 { font-size: 65px; font-weight: 900; color: var(--main); letter-spacing: -4px; }
+
+        /* الدراور السفلي */
+        .drawer {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: var(--glass); backdrop-filter: blur(40px);
+            border-top: 1px solid var(--border); border-radius: 45px 45px 0 0;
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 3000; padding: 25px 25px 50px; height: 160px;
+        }
+        .drawer.open { height: 80%; }
+        .handle { width: 100%; display: flex; justify-content: center; padding-bottom: 25px; cursor: pointer; }
+        .handle-bar { width: 50px; height: 6px; background: var(--main); border-radius: 10px; opacity: 0.2; }
+
+        .apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .drawer.open .apps-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        .app-card { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .icon-box { 
+            width: 60px; height: 60px; background: var(--main); color: #fff; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; font-size: 24px; 
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1); transition: 0.5s;
+        }
+        .drawer.open .icon-box { width: 100%; height: 135px; border-radius: 35px; font-size: 45px; }
+        .app-card span { font-size: 11px; font-weight: 900; color: var(--text); }
+        .hidden-app { display: none; }
+        .drawer.open .hidden-app { display: flex; }
+
+        #splash { position: absolute; inset: 0; background: var(--app); z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
-    <div class="phone">
+
+    <div class="phone" id="phoneBody">
+        <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+
+        <div id="splash">
+            <i class="fas fa-robot" style="font-size: 85px; color: var(--main);"></i>
+            <h1 style="color:var(--main); margin-top:20px; font-weight:900;">CYTHON 2.0</h1>
+            <div style="position: absolute; bottom: 60px; font-size: 12px; font-weight: 900; color: var(--main);">POWERED BY ALI QUTAIBA</div>
+        </div>
+
         <div class="sidebar" id="sidebar">
-            <h3 style="color:var(--main)">إعدادات Cython</h3>
-            <div class="theme-grid">
-                <div class="dot" style="background:#4facfe" onclick="setT('color-1')"></div>
-                <div class="dot" style="background:#ff6b6b" onclick="setT('color-2')"></div>
-                <div class="dot" style="background:#51cf66" onclick="setT('color-3')"></div>
-                <div class="dot" style="background:#a29bfe" onclick="setT('color-4')"></div>
-                <div class="dot" style="background:#fab005" onclick="setT('color-5')"></div>
-                <div class="dot" style="background:#ff85a1" onclick="setT('color-6')"></div>
-                <div class="dot" style="background:#20c997" onclick="setT('color-7')"></div>
-                <div class="dot" style="background:#5c7cfa" onclick="setT('color-8')"></div>
-                <div class="dot" style="background:#a67c52" onclick="setT('color-9')"></div>
-                <div class="dot" style="background:#333333" onclick="setT('color-10')"></div>
+            <div style="flex: 1; overflow-y: auto;">
+                <h2 style="color:var(--text); font-weight: 900; margin-bottom: 15px;">الإعدادات</h2>
+                <div class="theme-grid" id="themeGrid"></div>
+                <div class="side-item" onclick="toggleD()"><i class="fas fa-moon"></i> الوضع الليلي</div>
+                <div class="side-item" onclick="launchRocket(event, 'note.html')"><i class="fas fa-pen-nib"></i> الملاحظات</div>
+                <div class="side-item" onclick="location.href='https://t.me/Cython'"><i class="fab fa-telegram-plane"></i> قناة التليجرام</div>
             </div>
-            <div class="item" onclick="toggleD()"><i class="fas fa-adjust"></i> وضع ليلي / نهاري</div>
-            <a href="https://t.me/Cython" class="item"><i class="fab fa-telegram"></i> قناة التليجرام</a>
-            <button onclick="toggleMenu()" style="margin-top:20px; padding:10px; width:100%; background:var(--main); color:white; border:none; border-radius:10px; cursor:pointer;">إغلاق</button>
+            <button onclick="toggleMenu()" style="width: 100%; padding: 18px; background: var(--main); color: white; border: none; border-radius: 20px; font-weight: 900; cursor: pointer;">إغلاق</button>
         </div>
 
         <div class="header">
-            <i class="fas fa-bars" style="color:var(--main); font-size:24px; cursor:pointer" onclick="toggleMenu()"></i>
-            
-            <a href="info.html" id="userLink">
-                <i class="fas fa-user-circle" id="userIcon" style="color:var(--main); font-size:26px;"></i>
-            </a>
-        </div>
-
-        <div class="main">
-            <h1 class="brand">Cython 2.0</h1>
-            <p style="color:var(--p); font-weight:bold; margin-bottom:30px;">روبوت ذكاء اصطناعي متكامل</p>
-            
-            <div id="authArea">
-                <a href="signup.html" class="btn-join">سجل ويانه</a>
+            <i class="fas fa-bars-staggered menu-icon" onclick="toggleMenu()"></i>
+            <div id="userBtn" onclick="handleAliIdentity(event)" style="cursor:pointer;">
+                <div id="userIconContainer"><i class="fas fa-user-astronaut" style="color:var(--main); font-size:30px;"></i></div>
             </div>
         </div>
 
-        <div class="footer">
-            <a href="chat.html"><i class="fas fa-robot"></i></a>
-            <a href="games.html"><i class="fas fa-gamepad"></i></a>
-            <a href="camera.html"><i class="fas fa-camera"></i></a>
+        <div class="hero">
+            <h1>CYTHON</h1>
+            <div id="authArea" style="margin-top:25px; transition:0.5s;"></div>
+        </div>
+
+        <div class="drawer" id="drawer">
+            <div class="handle" onclick="toggleDrawer()"><div class="handle-bar"></div></div>
+            <div class="apps-grid">
+                <div class="app-card" onclick="launchRocket(event, 'chat.html')"><div class="icon-box"><i class="fas fa-comment-dots"></i></div><span>الدردشة</span></div>
+                <div class="app-card" onclick="launchRocket(event, 'vault.html')"><div class="icon-box"><i class="fas fa-fingerprint"></i></div><span>الخزنة</span></div>
+                <div class="app-card" onclick="launchRocket(event, 'games.html')"><div class="icon-box"><i class="fas fa-gamepad"></i></div><span>الألعاب</span></div>
+                <div class="app-card" onclick="launchRocket(event, 'note.html')"><div class="icon-box"><i class="fas fa-file-signature"></i></div><span>الملاحظات</span></div>
+                
+                <div class="app-card hidden-app" onclick="launchRocket(event, 'habits.html')"><div class="icon-box"><i class="fas fa-tasks"></i></div><span>المهام</span></div>
+                <div class="app-card hidden-app" onclick="launchRocket(event, 'camera.html')"><div class="icon-box"><i class="fas fa-camera"></i></div><span>الكاميرا</span></div>
+                <div class="app-card hidden-app" onclick="launchRocket(event, 'alarm.html')"><div class="icon-box"><i class="fas fa-clock"></i></div><span>المنبه</span></div>
+                <div class="app-card hidden-app" onclick="launchRocket(event, 'stats.html')"><div class="icon-box"><i class="fas fa-chart-line"></i></div><span>البيانات</span></div>
+            </div>
         </div>
     </div>
 
     <script>
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        
+        const popSound = document.getElementById('popSound');
+        const sidebar = document.getElementById('sidebar');
+        const drawer = document.getElementById('drawer');
+        const phoneBody = document.getElementById('phoneBody');
+
+        function toggleMenu() { sidebar.classList.toggle('active'); }
+        function toggleDrawer() { drawer.classList.toggle('open'); }
+
+        // لوجيك الهوية المطور: حساب -> info.html | زائر -> signup.html
+        function handleAliIdentity(e) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const targetPage = isLoggedIn ? 'info.html' : 'signup.html';
+            launchRocket(e, targetPage);
+        }
+
+        function launchRocket(e, page) {
+            const rocket = document.createElement('i');
+            rocket.className = 'fas fa-rocket rocket-launch';
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            
+            rocket.style.left = (x - 15) + 'px';
+            rocket.style.top = (y - 15) + 'px';
+            document.body.appendChild(rocket);
+
+            popSound.currentTime = 0;
+            popSound.play().catch(()=>{});
+            phoneBody.classList.add('shake-screen');
+
+            setTimeout(() => {
+                rocket.style.transform = 'translateY(-110vh) scale(1.8) rotate(-15deg)';
+                rocket.style.opacity = '0';
+            }, 50);
+
+            setTimeout(() => {
+                rocket.remove();
+                phoneBody.classList.remove('shake-screen');
+                location.href = page;
+            }, 650);
+        }
+
         function setT(c) {
             for(let i=1; i<=10; i++) document.documentElement.classList.remove('color-'+i);
             document.documentElement.classList.add(c);
@@ -126,31 +223,43 @@
         function toggleD() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('themeMode', isDark ? 'dark' : 'light');
-            document.documentElement.style.backgroundColor = isDark ? '#111' : '#f4f7f9';
+            document.documentElement.style.backgroundColor = isDark ? '#050505' : '#f0f2f5';
         }
 
-        function checkLoginStatus() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const username = localStorage.getItem('username');
+        window.addEventListener('DOMContentLoaded', () => {
+            // توليد الثيمات
+            const colors = ['#4facfe','#ff4757','#2ecc71','#a29bfe','#f1c40f','#e84393','#00d2d3','#54a0ff','#ae8b70','#34495e'];
+            const grid = document.getElementById('themeGrid');
+            colors.forEach((c, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.background = c;
+                dot.onclick = () => setT('color-' + (i + 1));
+                grid.appendChild(dot);
+            });
+
+            // تحديث واجهة المستخدم
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const user = localStorage.getItem('username');
             const authArea = document.getElementById('authArea');
-            const userLink = document.getElementById('userLink');
+            const userIcon = document.getElementById('userIconContainer');
 
-            if (isLoggedIn === 'true' && username) {
-                // 1. استبدال الأيقونة بالصورة في الهيدر
-                userLink.innerHTML = `<img src="https://ui-avatars.com/api/?name=${username}&background=random&color=fff" class="user-header-img">`;
-                
-                // 2. تحديث منطقة الترحيب في الوسط
-                authArea.innerHTML = `
-                    <div class="welcome-msg" style="display: flex;">
-                        <span>هلو،</span>
-                        <strong>${username}</strong>
-                        <i class="fas fa-hand-sparkles" style="color: #fab005;"></i>
-                    </div>
-                `;
+            if (isLoggedIn && user) {
+                userIcon.innerHTML = `<img src="https://ui-avatars.com/api/?name=${user}&background=random&color=fff" 
+                    style="width:40px; height:40px; border-radius:14px; border:2.5px solid var(--main); object-fit: cover;">`;
+                authArea.innerHTML = `<div style="color:var(--text); font-size:22px; font-weight:800;">هلا، <span style="color:var(--main)">${user}</span> 👋</div>`;
+            } else {
+                authArea.innerHTML = `<button onclick="location.href='signup.html'" style="background:var(--main); color:#fff; padding:18px 60px; border-radius:25px; border:none; font-weight:900; cursor:pointer;">ابدأ الآن</button>`;
             }
-        }
 
-        window.addEventListener('load', checkLoginStatus);
+            // إخفاء السبلاش
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                splash.style.transition = '0.8s';
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 800);
+            }, 2200);
+        });
     </script>
 </body>
 </html>

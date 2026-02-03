@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<script>
+    (function() {
+        // نظام استعادة المظهر اللحظي لضمان عدم حدوث وميض (Anti-Flicker)
+        const mode = localStorage.getItem('themeMode') || 'dark';
+        const color = localStorage.getItem('themeColor') || 'color-1';
+        if (mode === 'dark') document.documentElement.classList.add('dark');
+        document.documentElement.classList.add(color);
+        const bg = mode === 'dark' ? '#0a0a0a' : '#f4f7f9';
+        document.documentElement.style.backgroundColor = bg;
+    })();
+</script>
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cython Focus Ultra | Ali Qutaiba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@100;400;800&display=swap');
+        
+        :root { 
+            --main: #4facfe; --bg: #f4f7f9; --app: #ffffff; --text: #333; 
+            --border: rgba(0,0,0,0.05); --retry-green: #2ecc71;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+        
+        html.dark { 
+            --bg: #0a0a0a !important; --app: #161616 !important; --text: #eee !important; 
+            --border: rgba(255,255,255,0.06); --glass: rgba(22, 22, 22, 0.8);
+        }
+
+        /* الربط العشري الأسطوري */
+        html.color-1 { --main: #4facfe; } html.color-2 { --main: #ff4757; }
+        html.color-3 { --main: #2ecc71; } html.color-4 { --main: #a29bfe; }
+        html.color-5 { --main: #f1c40f; } html.color-6 { --main: #e84393; }
+        html.color-7 { --main: #00d2d3; } html.color-8 { --main: #54a0ff; }
+        html.color-9 { --main: #ae8b70; } html.color-10 { --main: #34495e; }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Cairo', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; caret-color: transparent !important;
+            user-select: none;
+        }
+
+        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: background 0.5s ease; }
+
+        .phone { 
+            width: 100%; height: 100%; max-width: 500px; background: var(--app); 
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* الهيدر المحسن */
+        .header { height: 85px; padding: 35px 25px 10px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .back-btn { 
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; 
+            color: var(--main); font-size: 20px; cursor: pointer; 
+            border-radius: 18px; background: var(--glass); border: 1px solid var(--border);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+        .back-btn:active { transform: scale(0.85) rotate(10deg); background: var(--main); color: white; }
+        
+        .edit-btn { color: var(--main); font-weight: 900; font-size: 15px; opacity: 0; pointer-events: none; transition: 0.3s; cursor: pointer; padding: 10px; }
+        .edit-btn.show { opacity: 1; pointer-events: auto; }
+
+        /* شريط التنقل الزجاجي */
+        .nav-pill { background: var(--bg); margin: 15px 25px; padding: 6px; border-radius: 24px; display: flex; position: relative; height: 56px; border: 1px solid var(--border); }
+        .tab { flex: 1; text-align: center; line-height: 44px; font-weight: 900; font-size: 14px; color: var(--text); z-index: 5; cursor: pointer; transition: 0.3s; }
+        .slider { position: absolute; width: calc(50% - 12px); height: 44px; background: var(--main); border-radius: 18px; top: 6px; right: 6px; transition: 0.5s cubic-bezier(0.6, 0, 0.2, 1); z-index: 1; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .tab.active { color: #fff; }
+
+        /* واجهة المؤقت - تطوير محرم */
+        .view-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .timer-shell { position: relative; width: 300px; height: 300px; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; }
+        .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); position: absolute; }
+        .track { fill: none; stroke: var(--border); stroke-width: 4; }
+        .fill { fill: none; stroke: var(--main); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 848; stroke-dashoffset: 0; transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease; }
+        .time-text { font-family: 'JetBrains Mono'; font-size: 55px; color: var(--text); font-weight: 100; letter-spacing: -2px; z-index: 2; }
+
+        /* الأزرار المطورة */
+        .quick-actions { display: flex; gap: 10px; margin-bottom: 35px; }
+        .capsule { background: var(--bg); border: 1px solid var(--border); padding: 14px 22px; border-radius: 20px; color: var(--text); font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .capsule.special { background: var(--main); color: white; border: none; box-shadow: 0 10px 20px -5px var(--main); }
+        .capsule:active { transform: scale(0.9); }
+
+        .main-controls { display: flex; gap: 40px; align-items: center; }
+        .btn-circle { width: 80px; height: 80px; border-radius: 50%; border: none; font-weight: 900; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .btn-retry { background: var(--bg); color: var(--retry-green); border: 2px solid var(--retry-green); box-shadow: 0 0 20px rgba(46, 204, 113, 0.1); }
+        .btn-play { background: var(--main); color: white; box-shadow: 0 15px 30px -10px var(--main); }
+        .btn-circle:active { transform: scale(0.85); }
+
+        /* المنبه - تطوير محرم */
+        .alarm-scroll { display: none; padding: 10px 25px; overflow-y: auto; flex: 1; width: 100%; }
+        .alarm-card { background: var(--bg); padding: 25px; border-radius: 35px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--border); transition: 0.4s; }
+        .alarm-card:hover { border-color: var(--main); }
+        .alarm-time-val { font-family: 'JetBrains Mono'; font-size: 42px; color: var(--text); font-weight: 400; line-height: 1; }
+        .delete-btn { color: #ff3b30; font-size: 24px; display: none; cursor: pointer; margin-left: 10px; }
+
+        /* التبديل (iOS Style) */
+        .ios-toggle { width: 55px; height: 32px; background: #444; border-radius: 20px; position: relative; transition: 0.4s; cursor: pointer; }
+        .ios-toggle::after { content: ''; position: absolute; width: 28px; height: 28px; background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .ios-toggle.on { background: var(--retry-green); }
+        .ios-toggle.on::after { left: 25px; }
+
+        /* الفلوتنج بوتون */
+        .add-fab { position: absolute; bottom: 40px; left: 30px; width: 70px; height: 70px; background: var(--main); color: white; border-radius: 25px; display: none; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 20px 40px -10px var(--main); border: none; cursor: pointer; transition: 0.3s; z-index: 100; }
+        .add-fab:active { transform: scale(0.9) rotate(90deg); }
+
+        /* الشيت السفلي */
+        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); display: none; align-items: flex-end; z-index: 2000; }
+        .sheet { width: 100%; background: var(--app); border-radius: 45px 45px 0 0; padding: 40px 30px; transform: translateY(100%); transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .sheet.up { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="phone">
+        <div class="overlay" id="overlay" onclick="closeM()">
+            <div class="sheet" id="sheet" onclick="event.stopPropagation()">
+                <div style="width: 50px; height: 6px; background: var(--border); border-radius: 10px; margin: 0 auto 30px;"></div>
+                <h3 id="mTitle" style="text-align:center; color:var(--text); font-weight: 900; font-size: 20px;">تخصيص الوقت</h3>
+                
+                <div class="picker-container" style="display:flex; justify-content:center; align-items:center; gap:25px; margin:40px 0;">
+                    <div style="text-align:center">
+                        <button class="p-btn" style="width:50px; height:50px; border-radius:15px; border:none; background:var(--bg); color:var(--main);" onclick="adj('h',1)"><i class="fas fa-chevron-up"></i></button>
+                        <div class="p-num" id="vh" style="font-size:60px; font-family:'JetBrains Mono'; color:var(--text);">00</div>
+                        <button class="p-btn" style="width:50px; height:50px; border-radius:15px; border:none; background:var(--bg); color:var(--main);" onclick="adj('h',-1)"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                    <span style="font-size:40px; color:var(--main); font-weight:100; opacity:0.5;">:</span>
+                    <div style="text-align:center">
+                        <button class="p-btn" style="width:50px; height:50px; border-radius:15px; border:none; background:var(--bg); color:var(--main);" onclick="adj('m',1)"><i class="fas fa-chevron-up"></i></button>
+                        <div class="p-num" id="vm" style="font-size:60px; font-family:'JetBrains Mono'; color:var(--text);">25</div>
+                        <button class="p-btn" style="width:50px; height:50px; border-radius:15px; border:none; background:var(--bg); color:var(--main);" onclick="adj('m',-1)"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                </div>
+
+                <div id="apBox" style="text-align:center; margin-bottom:40px; display:none;">
+                    <button id="vAp" onclick="tAp()" style="padding:15px 60px; border-radius:20px; border:2px solid var(--main); background:transparent; color:var(--main); font-weight:900; font-size:18px;">AM</button>
+                </div>
+
+                <div style="display:flex; gap:15px;">
+                    <button style="flex:1; padding:22px; border-radius:25px; border:none; background:var(--bg); color:var(--text); font-weight:900;" onclick="closeM()">إلغاء</button>
+                    <button style="flex:1; padding:22px; border-radius:25px; border:none; background:var(--main); color:white; font-weight:900; box-shadow:0 10px 20px -5px var(--main);" onclick="save()">تثبيت</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="header">
+            <div class="back-btn" onclick="handleSmartBack()"><i class="fas fa-chevron-right"></i></div>
+            <span class="edit-btn" id="editBtn" onclick="toggleEdit()">تعديل</span>
+        </div>
+
+        <div class="nav-pill">
+            <div class="slider" id="slid"></div>
+            <div class="tab active" onclick="switchMode('T')">المؤقت</div>
+            <div class="tab" onclick="switchMode('A')">المنبه</div>
+        </div>
+
+        <div class="view-content" id="timerView">
+            <div class="timer-shell">
+                <svg class="ring-svg">
+                    <circle class="track" cx="150" cy="150" r="140"></circle>
+                    <circle id="fill" class="fill" cx="150" cy="150" r="140"></circle>
+                </svg>
+                <div class="time-text" id="timeDigits">00:25:00</div>
+            </div>
+            <div class="quick-actions">
+                <div class="capsule" onclick="quickSet(5)">5 د</div>
+                <div class="capsule" onclick="quickSet(15)">15 د</div>
+                <div class="capsule" onclick="quickSet(25)">25 د</div>
+                <div class="capsule special" onclick="openM('T')"><i class="fas fa-clock"></i></div>
+            </div>
+            <div class="main-controls">
+                <button class="btn-circle btn-retry" onclick="resetT()"><i class="fas fa-rotate-right"></i></button>
+                <button class="btn-circle btn-play" id="playBtn" onclick="toggleT()"><i class="fas fa-play"></i></button>
+            </div>
+        </div>
+
+        <div class="alarm-scroll" id="alarmView">
+            <div id="alarmContainer"></div>
+        </div>
+        
+        <button class="add-fab" id="fab" onclick="openM('A')"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <script>
+        let mode='T', timer=null, timeLeft=1500, totalTime=1500;
+        let sh=0, sm=25, sap='AM', task='T', editing=false;
+
+        // وظيفة العودة الذكية المربوطة بـ Index
+        function handleSmartBack() {
+            if (window.history.length > 1) { window.history.back(); } 
+            else { window.location.href = "index.html"; }
+        }
+
+        // نظام التبديل المطور
+        function switchMode(m) {
+            mode = m;
+            const slid = document.getElementById('slid');
+            const tV = document.getElementById('timerView'), aV = document.getElementById('alarmView');
+            const fab = document.getElementById('fab'), edit = document.getElementById('editBtn');
+
+            if(m==='T') {
+                slid.style.transform = 'translateX(0)';
+                tV.style.display='flex'; aV.style.display='none'; fab.style.display='none';
+                edit.classList.remove('show');
+            } else {
+                slid.style.transform = 'translateX(-100%)';
+                tV.style.display='none'; aV.style.display='block'; fab.style.display='flex';
+                updateEditBtn();
+            }
+            // إضافة اهتزاز بسيط عند التبديل
+            if(window.navigator.vibrate) window.navigator.vibrate(10);
+        }
+
+        function quickSet(m) { 
+            totalTime=m*60; timeLeft=totalTime; updateUI(); 
+            if(window.navigator.vibrate) window.navigator.vibrate(20);
+        }
+
+        function toggleT() {
+            const btn = document.getElementById('playBtn');
+            if(timer) {
+                clearInterval(timer); timer=null;
+                btn.innerHTML='<i class="fas fa-play"></i>';
+                btn.style.background="var(--main)";
+            } else {
+                btn.innerHTML='<i class="fas fa-pause"></i>';
+                btn.style.background="#ff3b30";
+                timer = setInterval(() => {
+                    if(timeLeft <= 0) { 
+                        clearInterval(timer); 
+                        new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
+                        resetT(); 
+                        return; 
+                    }
+                    timeLeft--; updateUI();
+                }, 1000);
+            }
+        }
+
+        function resetT() {
+            clearInterval(timer); timer=null; timeLeft=totalTime; updateUI();
+            const btn = document.getElementById('playBtn');
+            btn.innerHTML='<i class="fas fa-play"></i>';
+            btn.style.background="var(--main)";
+        }
+
+        function updateUI() {
+            let h = Math.floor(timeLeft / 3600);
+            let m = Math.floor((timeLeft % 3600) / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timeDigits').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            const ring = document.getElementById('fill');
+            const offset = 848 - (848 * (timeLeft / totalTime));
+            ring.style.strokeDashoffset = offset;
+        }
+
+        // إدارة الشيت والمنبه
+        function openM(t) {
+            task = t;
+            document.getElementById('mTitle').innerText = t === 'T' ? 'تخصيص المؤقت' : 'ضبط منبه جديد';
+            document.getElementById('apBox').style.display = t === 'A' ? 'block' : 'none';
+            document.getElementById('vh').innerText = t === 'T' ? "00" : "07";
+            document.getElementById('vm').innerText = t === 'T' ? "25" : "30";
+            sh = parseInt(document.getElementById('vh').innerText);
+            sm = parseInt(document.getElementById('vm').innerText);
+            document.getElementById('overlay').style.display='flex';
+            setTimeout(() => document.getElementById('sheet').classList.add('up'), 50);
+        }
+
+        function closeM() {
+            document.getElementById('sheet').classList.remove('up');
+            setTimeout(() => document.getElementById('overlay').style.display='none', 400);
+        }
+
+        function adj(type, d) {
+            if(type==='h'){ 
+                sh+=d; let max = task==='T' ? 99 : 12;
+                if(sh>max) sh=0; if(sh<0) sh=max;
+                document.getElementById('vh').innerText=sh.toString().padStart(2,'0'); 
+            } else { 
+                sm+=d; if(sm>59) sm=0; if(sm<0) sm=59; 
+                document.getElementById('vm').innerText=sm.toString().padStart(2,'0'); 
+            }
+        }
+
+        function tAp() { sap=sap==='AM'?'PM':'AM'; document.getElementById('vAp').innerText=sap; }
+
+        function save() {
+            if(task==='T') {
+                totalTime = (sh*3600)+(sm*60); if(totalTime===0) totalTime=60;
+                timeLeft=totalTime; updateUI();
+            } else {
+                const cont = document.getElementById('alarmContainer');
+                const div = document.createElement('div');
+                div.className = 'alarm-card';
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <i class="fas fa-minus-circle delete-btn" onclick="removeA(this)"></i>
+                        <div>
+                            <div class="alarm-time-val">${sh.toString().padStart(2,'0')}:${sm.toString().padStart(2,'0')}</div>
+                            <div style="font-size:12px; color:var(--main); font-weight:900; margin-top:5px;">${sap} • يومياً</div>
+                        </div>
+                    </div>
+                    <div class="ios-toggle on" onclick="this.classList.toggle('on')"></div>
+                `;
+                cont.prepend(div);
+                updateEditBtn();
+            }
+            closeM();
+        }
+
+        function updateEditBtn() {
+            const has = document.querySelectorAll('.alarm-card').length > 0;
+            document.getElementById('editBtn').classList.toggle('show', has && mode === 'A');
+        }
+
+        function toggleEdit() {
+            editing = !editing;
+            const btn = document.getElementById('editBtn');
+            btn.innerText = editing ? "تم" : "تعديل";
+            document.querySelectorAll('.delete-btn').forEach(d => d.style.display = editing ? 'block' : 'none');
+        }
+
+        function removeA(el) {
+            const card = el.closest('.alarm-card');
+            card.style.transform = 'translateX(100%)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove(); updateEditBtn();
+                if(document.querySelectorAll('.alarm-card').length === 0) {
+                    editing = false; document.getElementById('editBtn').innerText = "تعديل";
+                }
+            }, 400);
+        }
+
+        // تشغيل واجهة الرنين الافتراضية
+        updateUI();
+    </script>
+</body>
+</html>

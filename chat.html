@@ -13,7 +13,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cython 2.0 - Chat Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -35,13 +35,36 @@
         html.dark { --bg: #111 !important; --app: #222 !important; --text: #fff !important; --ai-bubble: #333 !important; --p: #bbb !important; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; outline: none !important; caret-color: transparent !important; }
-        body { background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: 0.3s; }
-        .phone { width: 360px; height: 740px; background: var(--app); border-radius: 40px; display: flex; flex-direction: column; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); border: 8px solid #222; overflow: hidden; }
+        
+        body { 
+            background: var(--bg); height: 100vh; display: flex; 
+            justify-content: center; align-items: center; overflow: hidden; 
+            transition: 0.3s; width: 100%;
+        }
 
-        .header { height: 95px; padding: 45px 15px 10px; background: var(--main); color: white; display: flex; justify-content: space-between; align-items: center; z-index: 5000; }
-        .back-btn { cursor: pointer; padding: 5px; font-size: 18px; }
+        .phone { 
+            width: 100%; height: 100%; max-width: 500px; 
+            background: var(--app); display: flex; flex-direction: column; 
+            position: relative; overflow: hidden; transition: 0.3s;
+        }
 
-        .menu-wrapper { position: absolute; top: 85px; left: 15px; z-index: 9000; display: none; background: var(--app); border-radius: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 200px; padding: 8px; border: 1px solid rgba(0,0,0,0.1); color: var(--text); }
+        @media (min-width: 501px) {
+            .phone {
+                height: 92vh; border-radius: 40px; border: 8px solid #222;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            }
+        }
+
+        .header { 
+            height: calc(65px + env(safe-area-inset-top)); 
+            padding: env(safe-area-inset-top) 15px 0; 
+            background: var(--main); color: white; display: flex; 
+            justify-content: space-between; align-items: center; z-index: 5000; 
+        }
+
+        .back-btn { cursor: pointer; padding: 10px; font-size: 18px; }
+
+        .menu-wrapper { position: absolute; top: calc(70px + env(safe-area-inset-top)); left: 15px; z-index: 9000; display: none; background: var(--app); border-radius: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 200px; padding: 8px; border: 1px solid rgba(0,0,0,0.1); color: var(--text); }
         .menu-wrapper.active { display: block; }
         .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; }
         .sub-menu { display: none; margin-top: 5px; border-right: 3px solid var(--main); padding-right: 10px; background: var(--bg); border-radius: 10px; overflow: hidden; }
@@ -56,17 +79,32 @@
         .tools { display: flex; gap: 10px; margin-top: 8px; font-size: 11px; font-weight: bold; color: var(--main); }
         .tools span { cursor: pointer; }
 
-        .input-box { height: 75px; padding: 0 10px 10px; display: flex; align-items: center; gap: 6px; background: var(--app); border-top: 1px solid rgba(0,0,0,0.05); }
-        .input-box input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; background: var(--bg); color: var(--text); outline: none; }
-        .circle-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg); color: var(--p); display: flex; justify-content: center; align-items: center; cursor: pointer; border: none; flex-shrink: 0; }
+        .input-box { 
+            height: calc(75px + env(safe-area-inset-bottom)); 
+            padding: 5px 10px env(safe-area-inset-bottom); 
+            display: flex; align-items: center; gap: 8px; 
+            background: var(--app); border-top: 1px solid rgba(0,0,0,0.05); 
+        }
+
+        .input-box input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; background: var(--bg); color: var(--text); outline: none; font-size: 16px; }
+        
+        .circle-btn { 
+            width: 45px; height: 45px; border-radius: 50%; 
+            background: var(--bg); color: var(--p); display: flex; 
+            justify-content: center; align-items: center; cursor: pointer; 
+            border: none; flex-shrink: 0; transition: 0.2s;
+        }
+        .circle-btn:active { transform: scale(0.9); }
+        #clipBtn i { transform: rotate(45deg); font-size: 18px; } /* تعديل المكبس */
+        
         .send-btn { background: var(--main); color: white; }
         .mic-active { color: #ff4757; animation: pulse 1.5s infinite; }
 
-        .attach-box { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--app); border-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; z-index: 4000; border: 1px solid rgba(0,0,0,0.1); }
+        .attach-box { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 92%; background: var(--app); border-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; z-index: 4000; border: 1px solid rgba(0,0,0,0.1); }
         .attach-box.active { display: grid; }
         .btn-attach { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 15px; background: var(--bg); border-radius: 20px; cursor: pointer; color: var(--text); font-size: 13px; }
 
-        #toast { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 8px 20px; border-radius: 20px; font-size: 12px; z-index: 110000; display: none; }
+        #toast { position: absolute; top: calc(100px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 8px 20px; border-radius: 20px; font-size: 12px; z-index: 110000; display: none; }
         
         .drawing-pad { position: absolute; inset: 0; background: var(--app); z-index: 10000; display: none; flex-direction: column; }
         #canvas { background: #fff; flex: 1; touch-action: none; }
@@ -81,15 +119,15 @@
     <div id="toast"></div>
 
     <div class="drawing-pad" id="drawingPad">
-        <div style="padding: 45px 15px 15px; background: var(--main); color: white; display: flex; justify-content: space-between; align-items: center;">
+        <div style="padding: calc(40px + env(safe-area-inset-top)) 15px 15px; background: var(--main); color: white; display: flex; justify-content: space-between; align-items: center;">
             <span onclick="closeDrawing()" style="cursor:pointer">إلغاء</span>
             <b>لوحة الرسم</b>
             <span onclick="saveDrawing()" style="font-weight:bold; cursor:pointer">إرسال</span>
         </div>
         <canvas id="canvas"></canvas>
-        <div style="height: 90px; background: var(--bg); display: flex; justify-content: space-around; align-items: center;">
+        <div style="height: calc(85px + env(safe-area-inset-bottom)); background: var(--bg); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);">
             <button onclick="clearCanvas()" class="circle-btn"><i class="fas fa-eraser"></i></button>
-            <input type="color" id="colorPicker" value="#000000" style="width:45px; height:45px; border:none; background:none;">
+            <input type="color" id="colorPicker" value="#000000" style="width:40px; height:40px; border:none; background:none;">
             <button onclick="saveDrawing()" class="circle-btn" style="background:var(--main); color:white; width:60px;"><i class="fas fa-check"></i></button>
         </div>
     </div>
@@ -149,6 +187,7 @@
           shareSub = document.getElementById('shareSub'), 
           attachMenu = document.getElementById('attachMenu');
 
+    // التحكم في القوائم
     document.getElementById('dotsBtn').onclick = (e) => { 
         e.stopPropagation(); 
         mainMenu.classList.toggle('active'); 
@@ -174,30 +213,7 @@
         attachMenu.classList.remove('active');
     };
 
-    // --- وظائف المشاركة المصلحة ---
-    function saveAsPDF() {
-        showToast("جاري حفظ PDF...");
-        const element = document.getElementById('chatbox');
-        html2pdf().from(element).save('Cython_Chat.pdf');
-    }
-
-    function saveAsImage() {
-        showToast("جاري حفظ الصورة...");
-        html2canvas(document.getElementById('captureArea')).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'Cython_Chat.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-
-    function copyAppLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            showToast("تم نسخ الرابط بنجاح");
-        });
-    }
-
-    // --- بقية الوظائف ---
+    // وظائف الدردشة
     function sendMsg() {
         const i = document.getElementById('userInput');
         if(i.value.trim()){
@@ -220,20 +236,30 @@
         b.scrollTop = b.scrollHeight;
     }
 
-    let isRec = false;
-    function toggleMic() {
-        isRec = !isRec;
-        const btn = document.getElementById('micBtn');
-        if(isRec) { btn.classList.add('mic-active'); showToast("جاري الاستماع..."); }
-        else { btn.classList.remove('mic-active'); showToast("تم التوقف"); }
+    // PDF وصور
+    function saveAsPDF() {
+        showToast("جاري حفظ PDF...");
+        const element = document.getElementById('chatbox');
+        html2pdf().from(element).save('Cython_Chat.pdf');
     }
 
-    function translateMsg(b) { b.closest('.msg').childNodes[0].textContent = "I'm Cython AI, how can I help you today?"; }
-    function resetMsg(b) { const m = b.closest('.msg'); m.childNodes[0].textContent = m.getAttribute('data-original'); }
-    function speak(b) { const s = new SpeechSynthesisUtterance(b.closest('.msg').childNodes[0].textContent); s.lang = 'ar-SA'; window.speechSynthesis.speak(s); }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
-    function handleFile(i) { if(i.files[0]) { append(`📁 ملف مرفق: ${i.files[0].name}`, 'user'); attachMenu.classList.remove('active'); } }
+    function saveAsImage() {
+        showToast("جاري حفظ الصورة...");
+        html2canvas(document.getElementById('captureArea')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Cython_Chat.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
 
+    function copyAppLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showToast("تم نسخ الرابط بنجاح");
+        });
+    }
+
+    // الرسم
     function start(e) { painting = true; draw(e); }
     function end() { painting = false; ctx.beginPath(); }
     function draw(e) {
@@ -252,6 +278,20 @@
     function closeDrawing() { document.getElementById('drawingPad').style.display='none'; }
     function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); }
     function saveDrawing() { const url = canvas.toDataURL(); append(`<img src="${url}">`, 'user'); closeDrawing(); }
+
+    // وظائف إضافية
+    let isRec = false;
+    function toggleMic() {
+        isRec = !isRec;
+        const btn = document.getElementById('micBtn');
+        if(isRec) { btn.classList.add('mic-active'); showToast("جاري الاستماع..."); }
+        else { btn.classList.remove('mic-active'); showToast("تم التوقف"); }
+    }
+    function translateMsg(b) { b.closest('.msg').childNodes[0].textContent = "I'm Cython AI, how can I help you today?"; }
+    function resetMsg(b) { const m = b.closest('.msg'); m.childNodes[0].textContent = m.getAttribute('data-original'); }
+    function speak(b) { const s = new SpeechSynthesisUtterance(b.closest('.msg').childNodes[0].textContent); s.lang = 'ar-SA'; window.speechSynthesis.speak(s); }
+    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
+    function handleFile(i) { if(i.files[0]) { append(`📁 ملف مرفق: ${i.files[0].name}`, 'user'); attachMenu.classList.remove('active'); } }
 
     window.onload = function() {
         const incoming = localStorage.getItem('cython_incoming_chat');
